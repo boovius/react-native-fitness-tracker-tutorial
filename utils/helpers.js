@@ -11,17 +11,6 @@ export function getMetricMetaInfo (metric) {
       unit: 'miles',
       step: 1,
       type: 'steppers',
-      getIcon() {
-        return (
-          `<View>
-            <MaterialIcons
-              name='directions-run'
-              color={white}
-              size={35}
-            />
-          </View>`
-        )
-      }
     },
     bike: {
       displayName: 'Bike',
@@ -29,17 +18,6 @@ export function getMetricMetaInfo (metric) {
       unit: 'miles',
       step: 1,
       type: 'steppers',
-      getIcon() {
-        return (
-          `<View>
-            <MaterialCommunityIcons
-              name='bike'
-              color={white}
-              size={32}
-            />
-          </View>`
-        )
-      }
     },
     swim: {
       displayName: 'Swim',
@@ -47,17 +25,6 @@ export function getMetricMetaInfo (metric) {
       unit: 'meters',
       step: 100,
       type: 'steppers',
-      getIcon() {
-        return (
-          `<View>
-            <MaterialCommunityIcons
-              name='swim'
-              color={white}
-              size={35}
-            />
-          </View>`
-        )
-      }
     },
     sleep: {
       displayName: 'Sleep',
@@ -65,17 +32,6 @@ export function getMetricMetaInfo (metric) {
       unit: 'hours',
       step: 1,
       type: 'slider',
-      getIcon() {
-        return (
-          `<View>
-            <FontAwesome
-              name='bed'
-              color={white}
-              size={30}
-            />
-          </View>`
-        )
-      }
     },
     eat: {
       displayName: 'Eat',
@@ -83,18 +39,7 @@ export function getMetricMetaInfo (metric) {
       unit: 'rating',
       step: 1,
       type: 'slider',
-      getIcon() {
-        return (
-          `<View>
-            <MaterialCommunityIcons
-              name='food'
-              color={white}
-              size={35}
-            />
-          </View>`
-        )
-      }
-    },
+    }
   }
 
   return typeof metric === 'undefined'
