@@ -1,10 +1,20 @@
 import React, { Component } from 'react'
-import { View, Text } from 'react-native'
-import { getMetricMetaInfo } from '../utils/helpers'
+import { View, Text, TouchableOpacity } from 'react-native'
+import { getMetricMetaInfo, timeToString } from '../utils/helpers'
 import { FontAwesome, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { lightPurp } from '../utils/colors'
-import Slider from './Slider'
-import Stepper from './Stepper'
+import FitnessSlider from './FitnessSlider'
+import FitnessStepper from './FitnessStepper'
+import DateHeader from './DateHeader'
+
+
+function SubmitBtn ({submit}) {
+  return (
+    <TouchableOpacity onPress={submit}>
+      <Text>Submit</Text>
+    </TouchableOpacity>
+  )
+}
 
 export default class AddEntry extends Component {
   state = {
@@ -13,36 +23,6 @@ export default class AddEntry extends Component {
     swim: 0,
     sleep: 0,
     eat: 0
-  }
-
-  increment = (metric) => {
-    const { max, step } = getMetricMetaInfo(metric)
-
-    this.setState((state)=>{
-      const count = state[metric] + step
-
-      return {
-        ... state,
-        [metric]: count > max ? max : count
-      }
-    })
-  }
-
-  decrement = (metric) => {
-    this.setState((state)=>{
-      const count = state[metric] - step
-
-      return {
-        ... state,
-        [metric]: count < 0 ? 0 : count
-      }
-    })
-  }
-
-  slide = (metric, value) => {
-    this.setState(()=>({
-      [metric]: value
-    }))
   }
 
   getIcon = (key) => {
@@ -95,26 +75,76 @@ export default class AddEntry extends Component {
     }[key]
   }
 
+  increment = (metric) => {
+    const { max, step } = getMetricMetaInfo(metric)
+
+    this.setState((state)=>{
+      const count = state[metric] + step
+
+      return {
+        ... state,
+        [metric]: count > max ? max : count
+      }
+    })
+  }
+
+  decrement = (metric) => {
+    this.setState((state)=>{
+      const count = state[metric] - step
+
+      return {
+        ... state,
+        [metric]: count < 0 ? 0 : count
+      }
+    })
+  }
+
+  slide = (metric, value) => {
+    this.setState(()=>({
+      [metric]: value
+    }))
+  }
+
+  submit = () => {
+    const key = timeToString()
+    const entry = this.state
+
+    this.setState({
+      run: 0,
+      bike: 0,
+      swim: 0,
+      sleep: 0,
+      eat: 0
+    })
+
+    //update redux
+
+    //update db
+
+    //update notifications to user that no update is needed on this day
+  }
+
   render() {
     const metaInfo = getMetricMetaInfo()
 
     return (
       <View>
+        <DateHeader date={ new Date().toLocaleDateString()} />
         {Object.keys(metaInfo).map(( key ) => {
           const { displayName, type, getIcon, ...rest } = metaInfo[key]
           const value = this.state[key]
 
           return (
             <View key={key}>
-              {this.getIcon(key)}
               <Text>{displayName}</Text>
+              {this.getIcon(key)}
               { type === 'slider' ?
-                <Slider 
+                <FitnessSlider 
                   value={value}
-                  onChange={(value)=>this.slide(metric, value)}
+                  onChange={(value)=>this.slide(key, value)}
                   {...rest}
                 /> :
-                <Stepper 
+                <FitnessStepper 
                   value={value}
                   onIncrement={()=>this.increment(key)}
                   onDecrement={()=>this.decrement(key)}
@@ -124,6 +154,7 @@ export default class AddEntry extends Component {
             </View>
           )
         })}
+        <SubmitBtn submit={this.submit} />
       </View>
     )
   }
