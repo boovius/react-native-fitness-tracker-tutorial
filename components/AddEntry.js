@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
 import { getMetricMetaInfo, timeToString } from '../utils/helpers'
-import { FontAwesome, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons'
-import { lightPurp } from '../utils/colors'
+import getIcon from '../utils/GetIcon'
 import FitnessSlider from './FitnessSlider'
 import FitnessStepper from './FitnessStepper'
 import DateHeader from './DateHeader'
-
+import { Ionicons } from '@expo/vector-icons'
+import TextButton from './TextButton'
+import { submitEntry, removeEntry } from '../utils/api'
 
 function SubmitBtn ({submit}) {
   return (
@@ -23,56 +24,6 @@ export default class AddEntry extends Component {
     swim: 0,
     sleep: 0,
     eat: 0
-  }
-
-  getIcon = (key) => {
-    return {
-      run: (
-        <View>
-          <MaterialIcons
-            name='directions-run'
-            color={lightPurp}
-            size={35}
-          />
-        </View>
-      ),
-      bike: (
-        <View>
-          <MaterialCommunityIcons
-            name='bike'
-            color={lightPurp}
-            size={32}
-          />
-        </View>
-      ),
-      swim: (
-        <View>
-          <MaterialCommunityIcons
-            name='swim'
-            color={lightPurp}
-            size={35}
-          />
-        </View>
-      ),
-      sleep: (
-        <View>
-          <FontAwesome
-            name='bed'
-            color={lightPurp}
-            size={30}
-          />
-        </View>
-      ),
-      eat: (
-        <View>
-          <MaterialCommunityIcons
-            name='food'
-            color={lightPurp}
-            size={35}
-          />
-        </View>
-      )
-    }[key]
   }
 
   increment = (metric) => {
@@ -111,6 +62,8 @@ export default class AddEntry extends Component {
     const key = timeToString()
     const entry = this.state
 
+    //update redux
+
     this.setState({
       run: 0,
       bike: 0,
@@ -119,27 +72,45 @@ export default class AddEntry extends Component {
       eat: 0
     })
 
-    //update redux
-
-    //update db
+    submitEntry(key, entry)
 
     //update notifications to user that no update is needed on this day
+  }
+
+  reset = () => {
+    const key = timeToString()
+
+    //update redux
+
+    //route to home
+
+    removeEntry(key)
   }
 
   render() {
     const metaInfo = getMetricMetaInfo()
 
+    if (this.props.alreadyLogged) {
+      return (
+        <View>
+          <Ionicons name='ios-happy-outline' size={100} />   
+          <Text>You already logged your information for today</Text>
+          <TextButton onPress={this.reset}>Reset</TextButton>
+        </View>
+      )
+    }
+
     return (
       <View>
         <DateHeader date={ new Date().toLocaleDateString()} />
         {Object.keys(metaInfo).map(( key ) => {
-          const { displayName, type, getIcon, ...rest } = metaInfo[key]
+          const { displayName, type, ...rest } = metaInfo[key]
           const value = this.state[key]
 
           return (
             <View key={key}>
               <Text>{displayName}</Text>
-              {this.getIcon(key)}
+              {getIcon(key)}
               { type === 'slider' ?
                 <FitnessSlider 
                   value={value}

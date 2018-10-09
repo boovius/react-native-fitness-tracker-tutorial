@@ -1,13 +1,13 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, ScrollView } from 'react-native'
 import AddEntry from './components/AddEntry'
 
 export default class App extends React.Component {
   render() {
     return (
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <AddEntry />
-      </View>
+      </ScrollView>
     );
   }
 }
